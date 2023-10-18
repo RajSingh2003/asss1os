@@ -1,1 +1,56 @@
-uhi
+uhi<!DOCTYPE html>
+<html>
+<head>
+    <title>File Operations</title>
+</head>
+<body>
+    <h1>File Operations</h1>
+    <form method="post">
+        <label for="filename">Enter a filename:</label>
+        <input type="text" name="filename" required><br><br>
+
+        <label>Choose an operation:</label><br>
+        <input type="radio" name="operation" value="a"> Display type of file<br>
+        <input type="radio" name="operation" value="b"> Display last access time of file<br>
+        <input type="radio" name="operation" value="c"> Display the size of file<br>
+        <input type="radio" name="operation" value="d"> Delete the file<br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $filename = $_POST["filename"];
+        $operation = $_POST["operation"];
+
+        if (file_exists($filename)) {
+            switch ($operation) {
+                case 'a':
+                    $fileType = mime_content_type($filename);
+                    echo "<p>Type of file: $fileType</p>";
+                    break;
+                case 'b':
+                    $accessTime = date("F d Y H:i:s.", fileatime($filename));
+                    echo "<p>Last access time: $accessTime</p>";
+                    break;
+                case 'c':
+                    $fileSize = filesize($filename);
+                    echo "<p>Size of file: $fileSize bytes</p>";
+                    break;
+                case 'd':
+                    if (unlink($filename)) {
+                        echo "<p>File deleted successfully.</p>";
+                    } else {
+                        echo "<p>Error: Unable to delete the file.</p>";
+                    }
+                    break;
+                default:
+                    echo "<p>Invalid choice. Please choose a valid operation (a/b/c/d).</p>";
+            }
+        } else {
+            echo "<p>File not found. Please enter a valid filename.</p>";
+        }
+    }
+    ?>
+</body>
+</html>
